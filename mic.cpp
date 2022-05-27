@@ -347,16 +347,6 @@ static void outFunc(void *dest, void *src, int samples) {}
 static BOOL s_bMic = FALSE;
 static BOOL s_bEcho = FALSE;
 
-HANDLE micStart(void) {
-    s_bMic = TRUE;
-    return SoundInit(inFunc, outFunc);
-}
-
-void micEnd(HANDLE token) {
-    SoundTerm(token);
-    s_bMic = FALSE;
-}
-
 void echoOn(void) {
     s_bEcho = TRUE;
     if (s_bMic)
@@ -390,11 +380,26 @@ void micVolume(float volume) {
     s_volume = volume;
 }
 
+HANDLE micStart(BOOL bMicOn) {
+    s_bEcho = FALSE;
+    if (s_bMic) {
+        micOn();
+    } else {
+        micOff();
+    }
+    return SoundInit(inFunc, outFunc);
+}
+
+void micEnd(HANDLE token) {
+    SoundTerm(token);
+    s_bMic = FALSE;
+}
+
 #ifdef UNITTEST
 int main(int argc, char **argv) {
     printf("Key1:Reverb, Key2:Delay, Key3:Normal, Key4:Reverb+Delay, Key5:NoSound\n");
     printf("Press [Esc] to quit\n");
-    HANDLE h = micStart();
+    HANDLE h = micStart(TRUE);
     micVolume(2.0f);
     while (GetAsyncKeyState(VK_ESCAPE) >= 0) {
         if (GetAsyncKeyState('1') < 0) {

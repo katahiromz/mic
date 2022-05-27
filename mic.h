@@ -1,6 +1,6 @@
 #pragma once
 
-HANDLE micStart(void);
+HANDLE micStart(BOOL bMicOn);
 void micEnd(HANDLE token);
 
 void micOn(void);
