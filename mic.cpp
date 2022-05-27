@@ -347,7 +347,7 @@ static void outFunc(void *dest, void *src, int samples) {}
 static BOOL s_bMic = FALSE;
 static BOOL s_bEcho = FALSE;
 
-void echoOn(void) {
+void micEchoOn(void) {
     s_bEcho = TRUE;
     if (s_bMic)
         s_state = STATE_REVERB_AND_DELAY;
@@ -355,7 +355,7 @@ void echoOn(void) {
         s_state = STATE_NO_SOUND;
 }
 
-void echoOff(void) {
+void micEchoOff(void) {
     s_bEcho = FALSE;
     if (s_bMic)
         s_state = STATE_REVERB;

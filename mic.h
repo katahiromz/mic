@@ -7,5 +7,5 @@ void micOn(void);
 void micOff(void);
 void micVolume(float volume);
 
-void echoOn(void);
-void echoOff(void);
+void micEchoOn(void);
+void micEchoOff(void);
