@@ -372,7 +372,7 @@ void micOn(void) {
 }
 
 void micOff(void) {
-    s_bMic = TRUE;
+    s_bMic = FALSE;
     s_state = STATE_NO_SOUND;
 }
 
