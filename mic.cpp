@@ -203,7 +203,7 @@ static HANDLE SoundInit(SoundFillFunc inFunc, SoundFillFunc outFunc) {
 static void SoundTerm(HANDLE hThread) {
     if (!hThread) return;
     PostThreadMessage(GetThreadId(hThread), WM_QUIT, 0, 0);
-    WaitForSingleObject(hThread, 5000);
+    WaitForSingleObject(hThread, 3000);
     CloseHandle(hThread);
 }
 
@@ -319,22 +319,22 @@ static void inFunc(void *dest, void *src, int samples) {
             float v = bound(snd2float(s[i * 2 + 0]) * s_volume);
             d[i * 2 + 0] = float2snd(delayL.Sample() + v);
             d[i * 2 + 1] = float2snd(delayR.Sample() + v);
-            delayL.Update(snd2float(d[i * 2 + 0]) * 0.75f);
-            delayR.Update(snd2float(d[i * 2 + 1]) * 0.75f);
+            delayL.Update(snd2float(d[i * 2 + 0]) * 0.5f);
+            delayR.Update(snd2float(d[i * 2 + 1]) * 0.5f);
         }
         break;
     case STATE_REVERB_AND_DELAY: // reverb and delay
-        delayL.Init(20000);
-        delayR.Init(20000);
+        delayL.Init(50000);
+        delayR.Init(50000);
         for (int i = 0; i < samples; i++) {
-            float v0 = bound(snd2float(s[i * 2 + 0] * 0.5f) * s_volume);
+            float v0 = snd2float(s[i * 2 + 0] * 0.25f * s_volume);
             float v1 = bound(snd2float(s[i * 2 + 0]) * s_volume);
-            float L = delayL.Sample() + v1;
-            float R = delayR.Sample() + v1;
-            d[i * 2 + 0] = float2snd(0.25f * v0 + L + rebL.Sample(v0, 0, 0, 4));
-            d[i * 2 + 1] = float2snd(0.25f * v0 + R + rebR.Sample(v0, 0, 0, 4));
-            delayL.Update(L * 0.5f);
-            delayR.Update(R * 0.5f);
+            float L = 0.5f * v1 + (rebL.Sample(v0, 0, 0, 4));
+            float R = 0.5f * v1 + (rebR.Sample(v0, 0, 0, 4));
+            d[i * 2 + 0] = float2snd(delayL.Sample() + L);
+            d[i * 2 + 1] = float2snd(delayR.Sample() + R);
+            delayL.Update(bound(L * 0.75f * s_volume));
+            delayR.Update(bound(R * 0.75f * s_volume));
         }
         break;
     }
@@ -400,7 +400,7 @@ int main(int argc, char **argv) {
     printf("Key1:Reverb, Key2:Delay, Key3:Normal, Key4:Reverb+Delay, Key5:NoSound\n");
     printf("Press [Esc] to quit\n");
     HANDLE h = micStart(TRUE);
-    micVolume(2.0f);
+    micVolume(1.0f);
     while (GetAsyncKeyState(VK_ESCAPE) >= 0) {
         if (GetAsyncKeyState('1') < 0) {
             s_state = STATE_REVERB;
