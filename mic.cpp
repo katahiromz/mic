@@ -324,17 +324,17 @@ static void inFunc(void *dest, void *src, int samples) {
         }
         break;
     case STATE_REVERB_AND_DELAY: // reverb and delay
-        delayL.Init(50000);
-        delayR.Init(50000);
+        delayL.Init(60000);
+        delayR.Init(60000);
         for (int i = 0; i < samples; i++) {
-            float v0 = snd2float(s[i * 2 + 0] * 0.25f * s_volume);
+            float v0 = snd2float(s[i * 2 + 0] * 0.25f);
             float v1 = bound(snd2float(s[i * 2 + 0]) * s_volume);
-            float L = 0.5f * v1 + (rebL.Sample(v0, 0, 0, 4));
-            float R = 0.5f * v1 + (rebR.Sample(v0, 0, 0, 4));
+            float L = 0.25f * v1 + (rebL.Sample(v0, 0, 0, 4));
+            float R = 0.25f * v1 + (rebR.Sample(v0, 0, 0, 4));
             d[i * 2 + 0] = float2snd(delayL.Sample() + L);
             d[i * 2 + 1] = float2snd(delayR.Sample() + R);
-            delayL.Update(bound(L * 0.75f * s_volume));
-            delayR.Update(bound(R * 0.75f * s_volume));
+            delayL.Update(bound(L * 0.5f));
+            delayR.Update(bound(R * 0.5f));
         }
         break;
     }
